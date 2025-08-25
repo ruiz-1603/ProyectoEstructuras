@@ -1,0 +1,45 @@
+﻿using BuscadorIndiceInvertido.Base;
+using BuscadorIndiceInvertido.Utilidades;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BuscadorIndiceInvertido.ProcesamientoDatos
+{
+    internal class ProcesadorDoc
+    {
+        private string url { get; set; }
+        private Tokenizer tokenizer;
+        private StopWordsFiltro filtroSW;
+
+        public ProcesadorDoc()
+        {
+            url = "";
+            tokenizer = new Tokenizer();
+            filtroSW = new StopWordsFiltro();
+        }
+
+        public DoubleList<Doc> ProcesarDocumentos(string url = @"\Documentos")
+        {
+            DoubleList<Doc> docs = new DoubleList<Doc>();
+
+            foreach (var file in Directory.GetFiles(url, "*.txt"))
+            {
+                string contenido = File.ReadAllText(file);
+
+                DoubleList<string> tokens = tokenizer.TokenizeTexto(contenido);
+
+                string[] tokenArr = new string[tokens.Count];
+                tokens.CopyTo(tokenArr, 0);
+
+                DoubleList<string> tokensFiltrados = filtroSW.FiltrarStopWords(tokenArr);
+
+                docs.Add(new Doc(Path.GetFileName(file), tokensFiltrados));
+            }
+
+            return docs;
+        }
+    }
+}
