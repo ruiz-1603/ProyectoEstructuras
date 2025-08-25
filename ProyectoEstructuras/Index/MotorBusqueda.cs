@@ -1,12 +1,8 @@
 ﻿using BuscadorIndiceInvertido.Base;
 using BuscadorIndiceInvertido.Ordenamientos;
 using BuscadorIndiceInvertido.ProcesamientoDatos;
+using BuscadorIndiceInvertido.Strategies;
 using BuscadorIndiceInvertido.Utilidades;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BuscadorIndiceInvertido.Index
 {
@@ -14,14 +10,14 @@ namespace BuscadorIndiceInvertido.Index
     {
         private IndiceInvertido indice;
         private ProcesadorQuery procesadorQuery;
-        private ProcesadorVector procesadorVector;
+        private SimilitudCosenoStrategy procesadorVector;
         private Rankeador rankeador;
 
         public MotorBusqueda(IndiceInvertido indice)
         {
             this.indice = indice;
             procesadorQuery = new ProcesadorQuery();
-            procesadorVector = new ProcesadorVector();
+            procesadorVector = new SimilitudCosenoStrategy();
             rankeador = new Rankeador();
         }
 

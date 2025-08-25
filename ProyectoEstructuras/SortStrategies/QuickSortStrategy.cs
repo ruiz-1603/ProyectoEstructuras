@@ -1,5 +1,4 @@
 ﻿using BuscadorIndiceInvertido.Base;
-using System;
 
 namespace BuscadorIndiceInvertido.Estrategias
 {

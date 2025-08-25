@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BuscadorIndiceInvertido.Base;
+﻿using BuscadorIndiceInvertido.Base;
 using BuscadorIndiceInvertido.Index;
 using BuscadorIndiceInvertido.ProcesamientoDatos;
 using BuscadorIndiceInvertido.Utilidades;
+
 
 
 
@@ -75,6 +71,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
 
         public static bool Inicializar()
         {
+            
             return Iniciar() && ConstruirIndice();
         }
 

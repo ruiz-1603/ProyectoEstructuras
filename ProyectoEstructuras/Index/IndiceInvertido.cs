@@ -2,8 +2,6 @@
 using BuscadorIndiceInvertido.Calculos;
 using BuscadorIndiceInvertido.Ordenamientos;
 using BuscadorIndiceInvertido.Utilidades;
-using BuscadorIndiceInvertido.Estrategias;
-
 
 namespace BuscadorIndiceInvertido.Index
 {
