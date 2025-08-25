@@ -2,11 +2,8 @@
 using BuscadorIndiceInvertido.Calculos;
 using BuscadorIndiceInvertido.Ordenamientos;
 using BuscadorIndiceInvertido.Utilidades;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BuscadorIndiceInvertido.Estrategias;
+
 
 namespace BuscadorIndiceInvertido.Index
 {

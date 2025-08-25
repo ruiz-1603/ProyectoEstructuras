@@ -1,5 +1,6 @@
 ﻿using BuscadorIndiceInvertido.Base;
 using BuscadorIndiceInvertido.Utilidades;
+using BuscadorIndiceInvertido.Estrategias;
 using System;
 using System.Collections.Generic;
 using System.Linq;

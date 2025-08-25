@@ -9,6 +9,7 @@ using BuscadorIndiceInvertido.ProcesamientoDatos;
 using BuscadorIndiceInvertido.Utilidades;
 
 
+
 namespace BuscadorIndiceInvertido.ContoladorView
 {
     internal class Controller
