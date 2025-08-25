@@ -80,7 +80,7 @@ namespace BuscadorIndiceInvertido.Index
             foreach (var (doc, score) in resultados)
             {
                 Console.WriteLine($"{posicion}. {doc.FileName}");
-                Console.WriteLine($"   Score: {score:F4}");
+                Console.WriteLine($"   Puntaje: {score:F4}");
                 Console.WriteLine();
                 posicion++;
             }

@@ -99,7 +99,7 @@ namespace BuscadorIndiceInvertido.Index
             return tokens;
         }
 
-        private string[] EliminarDuplicados(string[] arr)
+        public string[] EliminarDuplicados(string[] arr)
         {
             if (arr.Length == 0) return arr;
 
