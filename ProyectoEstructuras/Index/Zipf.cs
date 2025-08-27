@@ -53,109 +53,123 @@ namespace BuscadorIndiceInvertido.Index
                 return;
             }
 
-            // 2. Calcular frecuencias de forma más eficiente
-            int[] frecuencias = new int[totalPalabras];
-            for (int i = 0; i < totalPalabras; i++)
-            {
-                var postings = indice.GetPostings(vocabulario[i]);
-                frecuencias[i] = CalcularFrecuenciaTotal(postings);
-            }
+            // 2. Calcular frecuencias - optimizado
+            int[] frecuencias = CalcularTodasFrecuencias(indice, vocabulario, totalPalabras);
 
-            // 3. Encontrar umbral usando algoritmo más eficiente
-            int umbralFrecuencia = EncontrarUmbralRapido(frecuencias);
+            // 3. Encontrar umbral usando algoritmo ultra-simple y confiable
+            int umbralFrecuencia = EncontrarUmbralSimple(frecuencias);
 
-            // 4. Identificar palabras a eliminar sin ordenar
-            var palabrasAEliminar = new DoubleList<string>();
-            for (int i = 0; i < totalPalabras; i++)
-            {
-                if (frecuencias[i] < umbralFrecuencia)
-                {
-                    palabrasAEliminar.Add(vocabulario[i]);
-                }                                                      //
-            }
-
-            // 5. Eliminar palabras del índice
-            if (palabrasAEliminar.Count > 0)
-            {
-                indice.EliminarPalabras(palabrasAEliminar);
-            }
+            // 4. Identificar y eliminar palabras de baja frecuencia
+            EliminarPalabrasBajaFrecuencia(indice, vocabulario, frecuencias, umbralFrecuencia);
 
             Console.WriteLine("OK");
         }
 
-        private int CalcularFrecuenciaTotal(DoubleList<(Doc doc, int freq)> postings)
+        private int[] CalcularTodasFrecuencias(IndiceInvertido indice, string[] vocabulario, int totalPalabras)
         {
-            int total = 0;
-            foreach (var (doc, freq) in postings)
+            int[] frecuencias = new int[totalPalabras];
+
+            for (int i = 0; i < totalPalabras; i++)
             {
-                total += freq;
+                var postings = indice.GetPostings(vocabulario[i]);
+                int total = 0;
+                foreach (var (doc, freq) in postings)
+                {
+                    total += freq;
+                }
+                frecuencias[i] = total;
             }
-            return total;
+
+            return frecuencias;
         }
 
-        // Algoritmo de selección rápida para encontrar el percentil sin ordenar todo
-        private int EncontrarUmbralRapido(int[] frecuencias)
+        // Algoritmo ultra-simple: ordenar directamente y tomar percentil
+        private int EncontrarUmbralSimple(int[] frecuencias)
         {
             if (frecuencias.Length == 0) return 0;
+            if (frecuencias.Length == 1) return frecuencias[0];
 
-            // Crear copia para no modificar el original
+            // Crear copia y ordenar usando HeapSort (más estable que QuickSort)
             int[] copia = new int[frecuencias.Length];
             for (int i = 0; i < frecuencias.Length; i++)
             {
                 copia[i] = frecuencias[i];
             }
 
-            // Calcular el índice del percentil
-            int indiceObjetivo = (int)(copia.Length * (1.0 - umbralPercentil));
-            if (indiceObjetivo >= copia.Length) indiceObjetivo = copia.Length - 1;
-            if (indiceObjetivo < 0) indiceObjetivo = 0;
+            // Usar HeapSort - O(n log n) garantizado, sin riesgo de bucles infinitos
+            HeapSortDescendente(copia);
 
-            // Usar QuickSelect para encontrar el k-ésimo elemento más grande
-            return QuickSelect(copia, 0, copia.Length - 1, indiceObjetivo);
+            // Calcular índice del percentil
+            int indiceUmbral = (int)(copia.Length * (1.0 - umbralPercentil));
+            if (indiceUmbral >= copia.Length) indiceUmbral = copia.Length - 1;
+            if (indiceUmbral < 0) indiceUmbral = 0;
+
+            return copia[indiceUmbral];
         }
 
-        // QuickSelect optimizado - O(n) en promedio
-        private int QuickSelect(int[] arr, int inicio, int fin, int k)
+        private void EliminarPalabrasBajaFrecuencia(IndiceInvertido indice, string[] vocabulario,
+                                                   int[] frecuencias, int umbralFrecuencia)
         {
-            if (inicio == fin) return arr[inicio];
+            var palabrasAEliminar = new DoubleList<string>();
 
-            // Partición simple
-            int pivoteIndex = ParticionSimple(arr, inicio, fin);
-
-            if (k == pivoteIndex)
-                return arr[k];
-            else if (k < pivoteIndex)
-                return QuickSelect(arr, inicio, pivoteIndex - 1, k);
-            else
-                return QuickSelect(arr, pivoteIndex + 1, fin, k);
-        }
-
-        private int ParticionSimple(int[] arr, int inicio, int fin)
-        {
-            // Usar mediana de tres para mejor pivot
-            int medio = inicio + (fin - inicio) / 2;
-            if (arr[medio] > arr[fin]) Intercambiar(arr, medio, fin);
-            if (arr[inicio] > arr[fin]) Intercambiar(arr, inicio, fin);
-            if (arr[medio] > arr[inicio]) Intercambiar(arr, medio, inicio);
-
-            int pivot = arr[inicio];
-            int i = inicio + 1;
-            int j = fin;
-
-            while (true)
+            for (int i = 0; i < vocabulario.Length; i++)
             {
-                while (i <= j && arr[i] >= pivot) i++; // Orden descendente
-                while (i <= j && arr[j] < pivot) j--;
-
-                if (i > j) break;
-
-                Intercambiar(arr, i, j);
-                i++;
-                j--;
+                if (frecuencias[i] < umbralFrecuencia)
+                {
+                    palabrasAEliminar.Add(vocabulario[i]);
+                }
             }
 
-            Intercambiar(arr, inicio, j);
-            return j;
+            if (palabrasAEliminar.Count > 0)
+            {
+                indice.EliminarPalabras(palabrasAEliminar);
+            }
+        }
+
+        // HeapSort - algoritmo más estable que QuickSort, sin riesgo de bucles infinitos
+        private void HeapSortDescendente(int[] arr)
+        {
+            int n = arr.Length;
+
+            // Construir max-heap
+            for (int i = n / 2 - 1; i >= 0; i--)
+            {
+                Heapify(arr, n, i);
+            }
+
+            // Extraer elementos del heap uno por uno
+            for (int i = n - 1; i > 0; i--)
+            {
+                // Mover la raíz actual al final
+                Intercambiar(arr, 0, i);
+
+                // Llamar heapify en el heap reducido
+                Heapify(arr, i, 0);
+            }
+        }
+
+        private void Heapify(int[] arr, int n, int i)
+        {
+            int mayor = i;
+            int izq = 2 * i + 1;
+            int der = 2 * i + 2;
+
+            // Si el hijo izquierdo es mayor que la raíz
+            if (izq < n && arr[izq] > arr[mayor])
+                mayor = izq;
+
+            // Si el hijo derecho es mayor que el mayor hasta ahora
+            if (der < n && arr[der] > arr[mayor])
+                mayor = der;
+
+            // Si el mayor no es la raíz
+            if (mayor != i)
+            {
+                Intercambiar(arr, i, mayor);
+
+                // Recursivamente heapify el subárbol afectado
+                Heapify(arr, n, mayor);
+            }
         }
 
         private void Intercambiar(int[] arr, int i, int j)
