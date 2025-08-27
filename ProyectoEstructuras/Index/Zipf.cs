@@ -120,14 +120,14 @@ namespace BuscadorIndiceInvertido.Index
             if (inicio == fin) return arr[inicio];
 
             // Partición simple
-            int pivotIndex = ParticionSimple(arr, inicio, fin);
+            int pivoteIndex = ParticionSimple(arr, inicio, fin);
 
-            if (k == pivotIndex)
+            if (k == pivoteIndex)
                 return arr[k];
-            else if (k < pivotIndex)
-                return QuickSelect(arr, inicio, pivotIndex - 1, k);
+            else if (k < pivoteIndex)
+                return QuickSelect(arr, inicio, pivoteIndex - 1, k);
             else
-                return QuickSelect(arr, pivotIndex + 1, fin, k);
+                return QuickSelect(arr, pivoteIndex + 1, fin, k);
         }
 
         private int ParticionSimple(int[] arr, int inicio, int fin)
