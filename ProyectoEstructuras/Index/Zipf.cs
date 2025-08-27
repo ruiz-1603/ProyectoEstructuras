@@ -71,7 +71,7 @@ namespace BuscadorIndiceInvertido.Index
                 if (frecuencias[i] < umbralFrecuencia)
                 {
                     palabrasAEliminar.Add(vocabulario[i]);
-                }
+                }                                                      //
             }
 
             // 5. Eliminar palabras del índice
