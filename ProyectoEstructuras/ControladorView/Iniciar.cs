@@ -22,7 +22,7 @@ namespace BuscadorIndiceInvertido.Interfaz
             }
             Console.WriteLine("OK");
 
-            // Paso 2: Construir índice
+            // Paso 2: Construir índice (incluye aplicación de Zipf)
             Console.Write("Construyendo índice invertido... ");
             if (!Controller.ConstruirIndice())
             {
