@@ -5,14 +5,59 @@ namespace BuscadorIndiceInvertido.Interfaz
 {
     public class IniciarSistema
     {
-        public static void Iniciar()
+        public static void IniciarMenu()
         {
             MostrarBienvenida();
 
+            int opcion = -1;
+
+            while (true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("1. Iniciarlizar búsqueda");
+                Console.WriteLine("2. Guardar en archivos");
+                Console.WriteLine("3. Cargar de archivos");
+                Console.WriteLine("0. Salir");
+                Console.WriteLine("Ingrese la opción que desea realizar: ");
+                string input = Console.ReadLine();
+
+                if (!int.TryParse(input, out opcion))
+                {
+                    Console.WriteLine("Debe ingresar un número válido.");
+                    continue;
+                }
+                
+                switch (opcion)
+                {
+                    case 1:
+                        IniciarSistemaBusqueda();
+                        break;
+
+                    case 2:
+                        // guardar en archivos
+                        break;
+
+                    case 3:
+                        // cargar en archivos
+                        break;
+
+                    case 0:
+                        Console.WriteLine("Saliendo del sistema...");
+                        return;
+
+                    default:
+                        Console.WriteLine("Opción inválida.");
+                        break;
+                }
+            }
+        }
+
+        public static void IniciarSistemaBusqueda()
+        {
             Console.WriteLine("Iniciando Sistema de Búsqueda...");
             Console.WriteLine(new string('-', 50));
 
-            // Paso 1: Procesar documentos
+            // procesar documentos
             Console.Write("Procesando documentos... ");
             if (!Controller.Iniciar())
             {
@@ -21,10 +66,10 @@ namespace BuscadorIndiceInvertido.Interfaz
                 return;
             }
 
-            // Obtener percentil del usuario
+            // obtener percentil del usuario
             double percentil = ObtenerPercentilUsuario();
 
-            // Paso 2: Construir índice
+            // construir índice
             Console.Write("Construyendo índice invertido... ");
             if (!Controller.ConstruirIndice(percentil))
             {
@@ -38,7 +83,7 @@ namespace BuscadorIndiceInvertido.Interfaz
             Console.WriteLine("Listo para realizar búsquedas");
             Console.WriteLine();
 
-            // Iniciar interfaz de búsqueda
+            // iniciar interfaz de busqueda
             Controller.Buscar();
         }
 
