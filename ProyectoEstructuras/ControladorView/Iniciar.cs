@@ -16,30 +16,26 @@ namespace BuscadorIndiceInvertido.Interfaz
             Console.Write("Procesando documentos... ");
             if (!Controller.Iniciar())
             {
-                Console.WriteLine("FALLÓ");
                 Console.WriteLine("No se pudo inicializar el sistema.");
                 EsperarTecla();
                 return;
             }
-            Console.WriteLine("OK");
 
             // Obtener percentil del usuario
-            double percentile = ObtenerPercentilUsuario();
+            double percentil = ObtenerPercentilUsuario();
 
             // Paso 2: Construir índice
             Console.Write("Construyendo índice invertido... ");
-            if (!Controller.ConstruirIndice(percentile))
+            if (!Controller.ConstruirIndice(percentil))
             {
-                Console.WriteLine("FALLÓ");
                 Console.WriteLine("No se pudo construir el índice.");
                 EsperarTecla();
                 return;
             }
-            Console.WriteLine("OK");
 
             Console.WriteLine();
-            Console.WriteLine("✓ Sistema inicializado correctamente");
-            Console.WriteLine("✓ Listo para realizar búsquedas");
+            Console.WriteLine("Sistema inicializado correctamente");
+            Console.WriteLine("Listo para realizar búsquedas");
             Console.WriteLine();
 
             // Iniciar interfaz de búsqueda
@@ -48,20 +44,20 @@ namespace BuscadorIndiceInvertido.Interfaz
 
         private static double ObtenerPercentilUsuario()
         {
-            double percentile;
+            double percentil;
             while (true)
             {
                 Console.WriteLine();
-                Console.Write("Ingrese el percentil de palabras a eliminar (ej. 0.1 para 10%, rango 0.1-0.7): ");
-                string input = Console.ReadLine();
+                Console.Write("Ingrese el percentil de palabras a eliminar (rango 0,1 - 0,7): ");
+                string perc = Console.ReadLine();
 
-                if (double.TryParse(input, out percentile) && percentile >= 0.1 && percentile <= 0.7)
+                if (double.TryParse(perc, out percentil) && percentil >= 0.1 && percentil <= 0.7)
                 {
-                    return percentile;
+                    return percentil;
                 }
                 else
                 {
-                    Console.WriteLine("Entrada inválida. Por favor, ingrese un número entre 0.1 y 0.7.");
+                    Console.WriteLine("Entrada inválida. Por favor, ingrese un número entre 0,1 y 0,7.");
                 }
             }
         }

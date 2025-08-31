@@ -43,7 +43,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
             }
         }
 
-        public static bool ConstruirIndice(double percentileToRemove)
+        public static bool ConstruirIndice(double percentil)
         {
             if (!sistemaInicializado || documentos == null)
             {
@@ -55,7 +55,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
             try
             {
                 indice = new IndiceInvertido();
-                indice.Build(documentos, percentileToRemove);
+                indice.Build(documentos, percentil);
 
                 motor = new MotorBusqueda(indice);
                 sistemaInicializado = true;
@@ -69,10 +69,10 @@ namespace BuscadorIndiceInvertido.ContoladorView
             }
         }
 
-        public static bool Inicializar(double percentileToRemove)
+        public static bool Inicializar(double percentil)
         {
             
-            return Iniciar() && ConstruirIndice(percentileToRemove);
+            return Iniciar() && ConstruirIndice(percentil);
         }
 
         public static void Buscar()
