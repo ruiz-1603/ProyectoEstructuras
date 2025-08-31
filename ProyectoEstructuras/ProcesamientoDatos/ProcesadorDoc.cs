@@ -16,7 +16,7 @@ namespace BuscadorIndiceInvertido.ProcesamientoDatos
             filtroSW = new StopWordsFiltro();
         }
 
-        public DoubleList<Doc> ProcesarDocumentos(string url = @"\Documentos")
+        public DoubleList<Doc> ProcesarDocumentos(string url)
         {
             DoubleList<Doc> docs = new DoubleList<Doc>();
 
