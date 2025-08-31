@@ -65,8 +65,6 @@ namespace BuscadorIndiceInvertido.Interfaz
                 return;
             }
 
-            double percentil = ObtenerPercentilUsuario();
-
             Console.Write("Construyendo índice invertido... ");
             if (!Controller.ConstruirIndice(percentil))
             {

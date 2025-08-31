@@ -44,6 +44,8 @@ namespace BuscadorIndiceInvertido.Index
             CalcularIDF(docsTotal);
         }
 
+
+
         private void BuildMatrizFrec(Doc[] arr)
         {
             int totalDocs = arr.Length;
@@ -125,6 +127,66 @@ namespace BuscadorIndiceInvertido.Index
         {
             double idf = GetIDF(palabra);
             return calculador.CalcularTFIDF(frecuencia, idf);
+        }
+
+        // Nuevos métodos para Zipf
+        public string[] GetVocabulario()
+        {
+            return palabras;
+        }
+
+        public int GetPalabrasCount()
+        {
+            return palabrasCount;
+        }
+
+        public void EliminarPalabras(DoubleList<string> palabrasAEliminar)
+        {
+            if (palabrasAEliminar.Count == 0) return;
+
+            // Contar cuántas palabras quedarán
+            int nuevasCount = 0;
+            for (int i = 0; i < palabrasCount; i++)
+            {
+                if (!ContieneEnLista(palabrasAEliminar, palabras[i]))
+                {
+                    nuevasCount++;
+                }
+            }
+
+            // Crear nuevos arrays
+            string[] nuevasPalabras = new string[nuevasCount];
+            double[] nuevosIDF = new double[nuevasCount];
+            DoubleList<(Doc doc, int freq)>[] nuevaMatriz = new DoubleList<(Doc doc, int freq)>[nuevasCount];
+
+            // Copiar solo las palabras que no están en la lista de eliminación
+            int nuevoIndex = 0;
+            for (int i = 0; i < palabrasCount; i++)
+            {
+                if (!ContieneEnLista(palabrasAEliminar, palabras[i]))
+                {
+                    nuevasPalabras[nuevoIndex] = palabras[i];
+                    nuevosIDF[nuevoIndex] = IDFValores[i];
+                    nuevaMatriz[nuevoIndex] = matrizFrec[i];
+                    nuevoIndex++;
+                }
+            }
+
+            // Actualizar los arrays principales
+            palabras = nuevasPalabras;
+            IDFValores = nuevosIDF;
+            matrizFrec = nuevaMatriz;
+            palabrasCount = nuevasCount;
+        }
+
+        private bool ContieneEnLista(DoubleList<string> lista, string palabra)
+        {
+            foreach (string item in lista)
+            {
+                if (item.Equals(palabra, StringComparison.Ordinal))
+                    return true;
+            }
+            return false;
         }
     }
 }

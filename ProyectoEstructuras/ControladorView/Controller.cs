@@ -3,9 +3,6 @@ using BuscadorIndiceInvertido.Index;
 using BuscadorIndiceInvertido.ProcesamientoDatos;
 using BuscadorIndiceInvertido.Utilidades;
 
-
-
-
 namespace BuscadorIndiceInvertido.ContoladorView
 {
     internal class Controller
@@ -28,12 +25,10 @@ namespace BuscadorIndiceInvertido.ContoladorView
                     Console.WriteLine("No se encontraron documentos para procesar");
                     sistemaInicializado = false;
                     return false;
-
                 }
 
                 sistemaInicializado = true;
                 return true;
-
             }
             catch (Exception)
             {
@@ -57,6 +52,11 @@ namespace BuscadorIndiceInvertido.ContoladorView
                 indice = new IndiceInvertido();
                 indice.Build(documentos, percentil);
 
+                // Aplicar Ley de Zipf después de construir el índice
+                Console.WriteLine();
+                Zipf zipf = new Zipf();
+                zipf.AplicarLeyZipf(indice);
+
                 motor = new MotorBusqueda(indice);
                 sistemaInicializado = true;
                 return true;
@@ -71,8 +71,11 @@ namespace BuscadorIndiceInvertido.ContoladorView
 
         public static bool Inicializar(double percentil)
         {
+
             
             return Iniciar() && ConstruirIndice(percentil);
+            return Iniciar() && ConstruirIndice();
+
         }
 
         public static void Buscar()
@@ -84,6 +87,5 @@ namespace BuscadorIndiceInvertido.ContoladorView
             }
             motor.IniciarInterfazUsuario();
         }
-
     }
 }
