@@ -1,7 +1,7 @@
 ﻿using BuscadorIndiceInvertido.Base;
 using BuscadorIndiceInvertido.Calculos;
+using BuscadorIndiceInvertido.Ordenamientos;
 using BuscadorIndiceInvertido.Utilidades;
-using System;
 
 namespace BuscadorIndiceInvertido.Index
 {
@@ -11,28 +11,29 @@ namespace BuscadorIndiceInvertido.Index
         private double[] IDFValores;
         private DoubleList<(Doc doc, int frec)>[] matrizFrec;
         private int palabrasCount;
-        private readonly TFIDFCalculador calculador;
+        private TFIDFCalculador calculador;
 
         public IndiceInvertido()
         {
-            palabras = new string[0]; // Array.Empty<string>();
-            IDFValores = new double[0]; // Array.Empty<double>();
-            matrizFrec = new DoubleList<(Doc doc, int freq)>[0]; // Array.Empty<DoubleList<(Doc doc, int freq)>>();
+            palabras = new string[0];
+            IDFValores = new double[0];
+            matrizFrec = new DoubleList<(Doc doc, int freq)>[0];
             palabrasCount = 0;
             calculador = new TFIDFCalculador();
-        }   
+        }
 
-        public void Build(DoubleList<Doc> docs, double percentil = 0.0)
+        public void Build(DoubleList<Doc> docs)
         {
             if (docs == null || docs.Count == 0) return;
 
             int docsTotal = docs.Count;
 
-            Zipf zipf = new Zipf();
-            string[] palabrasUnicas = zipf.FiltrarVocabulario(docs, percentil);
+            DoubleList<string> todasPalabras = ObtenerPalabras(docs);
 
-            // ordenar alfabéticamente para la búsqueda binaria
-            Array.Sort(palabrasUnicas, StringComparer.Ordinal);
+            string[] arr = todasPalabras.ToArray();
+            Array.Sort(arr, StringComparer.Ordinal);
+
+            string[] palabrasUnicas = EliminarDuplicados(arr);
 
             InicializarAtributos(palabrasUnicas.Length);
 
@@ -51,19 +52,19 @@ namespace BuscadorIndiceInvertido.Index
             int totalDocs = arr.Length;
             int[,] tempFrecs = new int[palabrasCount, totalDocs];
 
-            // contar frecuencias
+            // Contar frecuencias
             for (int docIndex = 0; docIndex < totalDocs; docIndex++)
             {
                 Doc doc = arr[docIndex];
                 foreach (string token in doc.tokens)
                 {
-                    int wordIndex = Array.BinarySearch(palabras, token, StringComparer.Ordinal);
+                    int wordIndex = Utils.BusquedaBinaria(token, palabras);
                     if (wordIndex >= 0)
                         tempFrecs[wordIndex, docIndex]++;
                 }
             }
 
-            // pasar a DoubleList
+            // Pasar a DoubleList
             for (int j = 0; j < palabrasCount; j++)
             {
                 matrizFrec[j] = new DoubleList<(Doc doc, int freq)>();
@@ -86,7 +87,42 @@ namespace BuscadorIndiceInvertido.Index
             }
         }
 
-        
+        // metodos aux
+        private DoubleList<string> ObtenerPalabras(DoubleList<Doc> docs)
+        {
+            DoubleList<string> tokens = new DoubleList<string>();
+            foreach (Doc doc in docs)
+            {
+                foreach (string token in doc.tokens)
+                {
+                    tokens.Add(token);
+                }
+            }
+            return tokens;
+        }
+
+        public string[] EliminarDuplicados(string[] arr)
+        {
+            if (arr.Length == 0) return arr;
+
+            int j = 0;
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (!arr[i].Equals(arr[j], StringComparison.Ordinal))
+                {
+                    j++;
+                    arr[j] = arr[i];
+                }
+            }
+
+            string[] palabrasUnicas = new string[j + 1];
+            for (int k = 0; k <= j; k++)
+            {
+                palabrasUnicas[k] = arr[k];
+            }
+
+            return palabrasUnicas;
+        }
 
         private void InicializarAtributos(int Vocabcount)
         {
@@ -107,7 +143,7 @@ namespace BuscadorIndiceInvertido.Index
         // metodos de acceso
         public DoubleList<(Doc doc, int freq)> GetPostings(string palabra)
         {
-            int indice = Array.BinarySearch(palabras, palabra, StringComparer.Ordinal);
+            int indice = Utils.BusquedaBinaria(palabra, palabras);
             if (indice >= 0)
                 return matrizFrec[indice];
 
@@ -116,7 +152,7 @@ namespace BuscadorIndiceInvertido.Index
 
         public double GetIDF(string palabra)
         {
-            int indice = Array.BinarySearch(palabras, palabra, StringComparer.Ordinal);
+            int indice = Utils.BusquedaBinaria(palabra, palabras);
             if (indice >= 0)
                 return IDFValores[indice];
 

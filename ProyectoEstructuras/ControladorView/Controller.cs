@@ -14,7 +14,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
 
         public static bool Iniciar()
         {
-            string rutaDocumentos = @"C:\Users\castr\Desktop\Documentos";
+            string rutaDocumentos = @"C:\Users\RuizM\Desktop\Documentos";
             try
             {
                 ProcesadorDoc processor = new ProcesadorDoc();
@@ -38,7 +38,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
             }
         }
 
-        public static bool ConstruirIndice(double percentil)
+        public static bool ConstruirIndice()
         {
             if (!sistemaInicializado || documentos == null)
             {
@@ -50,7 +50,7 @@ namespace BuscadorIndiceInvertido.ContoladorView
             try
             {
                 indice = new IndiceInvertido();
-                indice.Build(documentos, percentil);
+                indice.Build(documentos);
 
                 // Aplicar Ley de Zipf después de construir el índice
                 Console.WriteLine();
@@ -69,13 +69,9 @@ namespace BuscadorIndiceInvertido.ContoladorView
             }
         }
 
-        public static bool Inicializar(double percentil)
+        public static bool Inicializar()
         {
-
-            
-            return Iniciar() && ConstruirIndice(percentil);
             return Iniciar() && ConstruirIndice();
-
         }
 
         public static void Buscar()
