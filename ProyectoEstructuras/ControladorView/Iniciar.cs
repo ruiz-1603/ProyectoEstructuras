@@ -57,7 +57,6 @@ namespace BuscadorIndiceInvertido.Interfaz
             Console.WriteLine("Iniciando Sistema de Búsqueda...");
             Console.WriteLine(new string('-', 50));
 
-            // procesar documentos
             Console.Write("Procesando documentos... ");
             if (!Controller.Iniciar())
             {
@@ -66,10 +65,8 @@ namespace BuscadorIndiceInvertido.Interfaz
                 return;
             }
 
-            // obtener percentil del usuario
             double percentil = ObtenerPercentilUsuario();
 
-            // construir índice
             Console.Write("Construyendo índice invertido... ");
             if (!Controller.ConstruirIndice(percentil))
             {
@@ -83,7 +80,6 @@ namespace BuscadorIndiceInvertido.Interfaz
             Console.WriteLine("Listo para realizar búsquedas");
             Console.WriteLine();
 
-            // iniciar interfaz de busqueda
             Controller.Buscar();
         }
 
@@ -93,16 +89,16 @@ namespace BuscadorIndiceInvertido.Interfaz
             while (true)
             {
                 Console.WriteLine();
-                Console.Write("Ingrese el percentil de palabras a eliminar (rango 0,1 - 0,7): ");
-                string perc = Console.ReadLine();
+                Console.Write("Ingrese el percentil de palabras a eliminar (rango 0,0 - 0,7): ");
+                string input = Console.ReadLine();
 
-                if (double.TryParse(perc, out percentil) && percentil >= 0.1 && percentil <= 0.7)
+                if (double.TryParse(input, out percentil) && percentil >= 0.0 && percentil <= 0.7)
                 {
                     return percentil;
                 }
                 else
                 {
-                    Console.WriteLine("Entrada inválida. Por favor, ingrese un número entre 0,1 y 0,7.");
+                    Console.WriteLine("Entrada inválida. Por favor, ingrese un número entre 0.0 y 0.7.");
                 }
             }
         }

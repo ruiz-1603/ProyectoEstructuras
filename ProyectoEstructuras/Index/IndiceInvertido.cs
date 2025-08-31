@@ -49,7 +49,7 @@ namespace BuscadorIndiceInvertido.Index
             int totalDocs = arr.Length;
             int[,] tempFrecs = new int[palabrasCount, totalDocs];
 
-            // Contar frecuencias
+            // contar frecuencias
             for (int docIndex = 0; docIndex < totalDocs; docIndex++)
             {
                 Doc doc = arr[docIndex];
@@ -61,7 +61,7 @@ namespace BuscadorIndiceInvertido.Index
                 }
             }
 
-            // Pasar a DoubleList
+            // pasar a DoubleList
             for (int j = 0; j < palabrasCount; j++)
             {
                 matrizFrec[j] = new DoubleList<(Doc doc, int freq)>();
